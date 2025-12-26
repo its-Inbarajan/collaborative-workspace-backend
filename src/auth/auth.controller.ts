@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { userAuthSchema } from "./auth.schema";
 import * as authService from './auth.service';
-import { AuthRequest } from "../@types/auth.types";
 import { CustomError } from "../common/error.handler";
 
 export async function register(
@@ -51,7 +50,7 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-export async function me(req: AuthRequest, res: Response, next: NextFunction) {
+export async function me(req: Request, res: Response, next: NextFunction) {
     try {
         const userId = req.user!.id;
 
