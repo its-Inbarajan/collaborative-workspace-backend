@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { Server } from 'socket.io';
 import { connectDB } from './common/db';
 import { EnvConfig } from './config/env';
+import { authRouter } from './auth/auth.routes';
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use(morgan('dev'));
 app.get("/health", (_, res) => {
     res.json({ status: "OK" });
 });
+
+app.use('/api/v1', authRouter)
 
 const io = new Server(server, {
     cors: {
