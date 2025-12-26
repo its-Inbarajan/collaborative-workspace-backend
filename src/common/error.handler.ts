@@ -1,34 +1,45 @@
 import { NextFunction, Request, Response } from 'express';
-import { EnvConfig } from '../config/env';
+import { ZodError } from 'zod';
 
 export class CustomError extends Error {
-    public statusCode: number;
-    public success: boolean;
+    status: number;
 
-    constructor(message: string, statusCode: number, success: boolean = false) {
+    constructor(message: string, status = 400) {
         super(message);
-        this.statusCode = statusCode;
-        this.success = success;
+        this.status = status;
 
-        // Ensure the error stack trace is captured
         Error.captureStackTrace(this, this.constructor);
     }
 }
 
 
 export const GlobalError = (
-    err: CustomError,
+    err: unknown,
     _req: Request,
     res: Response,
     _next: NextFunction
 ) => {
-    const statusCode = err.statusCode || 500;
-    const success = err.success || false;
-    const stack = err.stack;
-    res.status(statusCode).json({
-        success,
-        message: err.message,
-        statusCode,
-        stack: EnvConfig.NODE_ENV === 'development' ? stack : undefined,
+    // Custom application errors
+    if (err instanceof CustomError) {
+        return res.status(err.status).json({
+            success: false,
+            message: err.message,
+        });
+    }
+
+    // Validation errors
+    if (err instanceof ZodError) {
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
+    }
+
+    // Unknown / programmer errors
+    console.error(err);
+
+    return res.status(500).json({
+        success: false,
+        message: 'Internal server error',
     });
 };

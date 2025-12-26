@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { connectDB } from './common/db';
 import { EnvConfig } from './config/env';
 import { authRouter } from './auth/auth.routes';
+import { GlobalError } from './common/error.handler';
 
 dotenv.config();
 
@@ -26,7 +27,10 @@ app.get("/health", (_, res) => {
     res.json({ status: "OK" });
 });
 
-app.use('/api/v1', authRouter)
+app.use('/api/v1/auth', authRouter)
+
+
+app.use(GlobalError)
 
 const io = new Server(server, {
     cors: {
