@@ -1,11 +1,11 @@
-import { NextFunction, Response } from "express";
-import { AuthRequest, JwtPayload } from "../@types/auth.types";
+import { NextFunction, Request, Response } from "express";
+import { JwtPayload } from "../@types/auth.types";
 import { CustomError } from "../common/error.handler";
 import jwt from 'jsonwebtoken';
 import { EnvConfig } from "../config/env";
 
 
-export async function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
+export async function authenticate(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization
     if (!authHeader) {
         return next(new CustomError('Missing token', 401))
