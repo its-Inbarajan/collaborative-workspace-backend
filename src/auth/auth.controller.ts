@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { userAuthSchema } from "./auth.schema";
 import * as authService from './auth.service';
 import { AuthRequest } from "../@types/auth.types";
+import { CustomError } from "../common/error.handler";
 
 export async function register(
     req: Request,
@@ -9,7 +10,11 @@ export async function register(
     next: NextFunction
 ) {
     try {
-        const input = userAuthSchema.parse(req.body);
+        const parsed = userAuthSchema.safeParse(req.body);
+        if (!parsed.success) {
+            throw new CustomError('Invalid request data', 400);
+        }
+        const input = parsed.data
 
         const result = await authService.register(
             input.email,
@@ -27,11 +32,14 @@ export async function register(
 
 export async function login(req: Request, res: Response, next: NextFunction) {
     try {
-        const input = userAuthSchema.parse(req.body);
+        const parsed = userAuthSchema.safeParse(req.body);
+        if (!parsed.success) {
+            throw new CustomError('Invalid request data', 400);
+        }
 
         const result = await authService.login(
-            input.email,
-            input.password
+            parsed.data.email,
+            parsed.data.password
         )
 
         res.status(200).json({

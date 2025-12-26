@@ -7,7 +7,7 @@ import { CustomError } from '../common/error.handler';
 export async function register(email: string, password: string) {
     const existingUser = await authRepo.findUserByEmail(email);
     if (existingUser) {
-        throw new Error('EMAIL_ALREADY_EXISTS');
+        throw new CustomError('EMAIL_ALREADY_EXISTS', 409);
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -33,12 +33,13 @@ export async function login(email: string, password: string) {
     const user = await authRepo.findUserWithPassword(email);
 
     if (!user) {
-        throw new CustomError('INVALID_CREDENTIALS', 403);
+        throw new CustomError('User not found.', 403);
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
-        throw new CustomError('INVALID_CREDENTIALS', 401);
+        throw new CustomError('Password mismatch.', 401);
     }
 
     const accessToken = generateAccessToken({
