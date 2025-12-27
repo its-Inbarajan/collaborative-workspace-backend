@@ -9,6 +9,7 @@ import { EnvConfig } from './config/env';
 import { authRouter } from './auth/auth.routes';
 import { GlobalError } from './common/error.handler';
 import { globalRateLimit } from './common/ratelimit';
+import workspaceRouter from './workspaces/workspace.routes';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get("/health", (_, res) => {
 });
 
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/workspace', workspaceRouter);
 
 app.use(globalRateLimit)
 app.use(GlobalError)
