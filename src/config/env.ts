@@ -10,6 +10,7 @@ const getSanitizedConfig = () => {
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL,
         CLIENT_URL: process.env.CLIENT_URL,
+        REDIS_URL: process.env.REDIS_URL,
     }
 
     // Check if any values are got undifined
