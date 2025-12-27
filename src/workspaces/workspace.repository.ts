@@ -115,3 +115,19 @@ export async function createProjectRepo(workspaceId: string, name: string, descr
 
     return result.rows[0]
 }
+
+export async function isWorkspaceMember(
+    workspaceId: string,
+    userId: string
+): Promise<boolean> {
+    const result = await pool.query(
+        `
+    SELECT 1
+    FROM workspace_members
+    WHERE workspace_id = $1 AND user_id = $2
+    `,
+        [workspaceId, userId]
+    );
+
+    return (result.rowCount ?? 0) > 0;
+}
