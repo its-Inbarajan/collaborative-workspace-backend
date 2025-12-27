@@ -50,15 +50,45 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+interface User {
+    id: string,
+    role: string
+}
+
+interface AuthenticatedRequest extends Request {
+    user: User;
+}
+
 export async function me(req: Request, res: Response, next: NextFunction) {
     try {
-        const userId = req.user!.id;
+        const authenticatedRequest = req as AuthenticatedRequest
+        if (!req.user) {
+            throw new CustomError('Unauthorized', 401);
+        }
+        const user = await authService.getMe(authenticatedRequest.user.id as string);
 
-        const user = await authService.getMe(userId);
+        res.json({
+            success: true,
+            data: user
+        });
+    } catch (error: unknown) {
+        next(error)
+    }
+}
+
+export async function refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            throw new CustomError('Refresh token required', 400);
+        }
+
+        const tokens = await authService.refreshToken(refreshToken);
 
         res.status(200).json({
             success: true,
-            data: user,
+            data: tokens,
         });
     } catch (error: unknown) {
         next(error)
