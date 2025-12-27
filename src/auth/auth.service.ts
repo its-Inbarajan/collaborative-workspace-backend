@@ -3,6 +3,7 @@ import { AppConstants } from '../config/constant';
 import * as authRepo from './auth.repository';
 import { generateAccessToken, generateRefreshToken } from './auth.utils';
 import { CustomError } from '../common/error.handler';
+import { pool } from '../common/db';
 
 export async function register(email: string, password: string) {
     const existingUser = await authRepo.findUserByEmail(email);
@@ -68,4 +69,32 @@ export async function getMe(userId: string) {
     }
 
     return user
+}
+
+export async function refreshToken(refreshToken: string) {
+    const result = await pool.query(
+        `
+        SELECT * FROM refresh_token
+        WHERE token = $1 AND revoked = false AND expires_at > NOW() 
+        `,
+        [refreshToken]
+    )
+
+    const storedToken = result.rows[0];
+    if (!storedToken) {
+        throw new CustomError('Invalid refresh token', 401);
+    }
+
+    await pool.query(
+        `UPDATE refresh_tokens SET revoked = true WHERE id = $1`,
+        [storedToken.id]
+    );
+
+    const newRefreshToken = await generateRefreshToken(storedToken.user_id);
+    const accessToken = generateAccessToken({ id: storedToken.user_id, role: storedToken.role });
+
+    return {
+        accessToken,
+        refreshToken: newRefreshToken,
+    };
 }
