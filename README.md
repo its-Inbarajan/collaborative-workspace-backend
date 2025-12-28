@@ -1,6 +1,7 @@
 # Purple Merit
 
-A collaborative workspace backend built with Express.js, PostgreSQL, and real-time socket.io support.
+Backend service for a collaborative workspace platform, built as part of a technical assessment.
+The system demonstrates API-first design, authentication, role-based access, real-time collaboration, asynchronous processing, and proper backend architecture.
 
 ## Overview
 
@@ -21,6 +22,8 @@ Collaborative workspace full-featured backend service for collaborative workspac
 - **HTTP Utilities**: CORS, Morgan (logging)
 - **Code Quality**: ESLint, Prettier, Husky, lint-staged
 - **Testing**: Jest + Supertest
+- **Docker** : Docker Compose
+
 
 ## Features
 
