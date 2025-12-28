@@ -25,7 +25,7 @@ export function registerSocketHandlers(
         socket.join(workspaceId);
         joinedWorkspaces.add(workspaceId);
 
-        // Local-only operation
+        // Global-only operation
         await publishCollaborationEvent({
             type: 'USER_JOINED',
             data: {

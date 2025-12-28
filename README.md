@@ -1,1 +1,164 @@
-**HELLO THERE**
+# Purple Merit
+
+A collaborative workspace backend built with Express.js, PostgreSQL, and real-time socket.io support.
+
+## Overview
+
+Collaborative workspace full-featured backend service for collaborative workspaces with authentication, OAuth integration, WebSocket support, job queuing, and API documentation.
+
+## Tech Stack
+
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Express.js 5.2
+- **Database**: PostgreSQL with pg driver
+- **Authentication**: JWT + Passport.js (Google OAuth 2.0)
+- **Real-time**: Socket.io 4.8
+- **Job Queue**: BullMQ 5.66 with Redis
+- **Caching**: Redis & ioredis 5.8
+- **API Docs**: Swagger UI Express
+- **Validation**: Zod
+- **Password Hashing**: bcrypt
+- **HTTP Utilities**: CORS, Morgan (logging)
+- **Code Quality**: ESLint, Prettier, Husky, lint-staged
+- **Testing**: Jest + Supertest
+
+## Features
+
+- User authentication & registration with JWT
+- Google OAuth 2.0 integration with token refresh
+- Rate limiting on auth endpoints
+- Real-time WebSocket communication via Socket.io
+- Async job processing with BullMQ queues
+- PostgreSQL database integration
+- API documentation with Swagger UI
+- Pre-commit hooks with ESLint & automated tests
+- Password hashing with bcrypt
+- Request logging with Morgan
+- Input validation with Zod
+- CORS support
+
+Note:
+The current implementation uses Redis Pub/Sub for event distribution.
+Socket.IO Redis adapter can be introduced to synchronize rooms when scaling to multiple Node.js instances.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- PostgreSQL
+- Redis
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Setup
+
+Create a `.env` file in the root directory with required variables:
+
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/purple_merit
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=your_jwt_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+CLIENT_URL=http://localhost:3000
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+Starts the server with hot-reload using ts-node-dev.
+
+### Build
+
+```bash
+npm run build
+```
+
+Compiles TypeScript to JavaScript in the `dist/` folder.
+
+### Production
+
+```bash
+npm start
+```
+
+Runs the compiled server from `dist/server.js`.
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with hot-reload |
+| `npm run build` | Compile TypeScript to JavaScript |
+| `npm start` | Run production server |
+| `npm test` | Run Jest test suite |
+| `npm run lint` | Check code with ESLint (max-warnings=0) |
+| `npm run lint:fix` | Fix ESLint issues automatically |
+| `npm run format` | Format code with Prettier |
+| `npm run prepare` | Install Husky git hooks |
+| `npm run precommit` | Run lint & tests (auto-runs via Husky) |
+
+## Project Structure
+
+```
+src/
+├── auth/              # Authentication routes & controllers
+├── common/            # Shared utilities (rate limiting, etc.)
+├── config/            # Configuration files
+├── server.ts          # Entry point
+└── ...
+dist/                 # Compiled JavaScript output
+```
+
+## API Documentation
+
+Once the server is running, access Swagger UI documentation at:
+```
+http://localhost:3000/api-docs
+```
+
+## Authentication
+
+### Local Auth
+- **POST** `/auth/register` - Register new user
+- **POST** `/auth/login` - Login user (rate-limited)
+
+### OAuth
+- **GET** `/auth/oauth/google` - Initiate Google OAuth flow
+- **GET** `/auth/oauth/google/callback` - Google OAuth callback handler
+
+### User
+- **GET** `/auth/me` - Get authenticated user profile (requires JWT)
+- **POST** `/auth/refresh` - Refresh access token (rate-limited)
+
+## Code Quality
+
+- **Linting**: ESLint with TypeScript support (max-warnings=0)
+- **Formatting**: Prettier
+- **Pre-commit Hooks**: Husky + lint-staged (auto-runs ESLint & Jest on commit)
+- **Testing**: Jest with Supertest for API testing
+
+## Database
+
+- **PostgreSQL**: Primary data storage
+- **Redis**: Session caching & BullMQ job queue backing store
+
+## Queue System
+
+BullMQ integration for asynchronous job processing with Redis as the message broker.
+
+## License
+
+ISC
+
+## Author
+
+its-Inbarajan
