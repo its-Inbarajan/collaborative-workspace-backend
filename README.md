@@ -84,6 +84,70 @@ Starts the server with hot-reload using ts-node-dev.
 ```bash
 npm run build
 ```
+## Docker Setup
+
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Running with Docker
+
+1. **Create a `.env` file** in the root directory:
+
+```
+DATABASE_URL=postgresql://postgres:postgres@db:5432/collaborative-workspace
+REDIS_URL=redis://redis:6379
+JWT_SECRET=your_jwt_secret_here
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+CLIENT_URL=http://localhost:3000
+NODE_ENV=development
+PORT=3000
+```
+
+2. **Build and start containers**:
+
+```bash
+docker-compose up --build
+```
+
+This will start:
+- **Node.js API**: http://localhost:3000
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+- **Swagger UI**: http://localhost:3000/api-docs
+
+3. **Stop containers**:
+
+```bash
+docker-compose down
+```
+
+4. **View logs**:
+
+```bash
+docker-compose logs -f app
+```
+
+5. **Run migrations** (if applicable):
+
+```bash
+docker-compose exec app npm run migrate
+```
+
+### Docker Compose Configuration
+
+Ensure you have a `docker-compose.yml` file in your root directory with PostgreSQL and Redis services defined.
+
+### Local Development (Without Docker)
+
+```bash
+npm install
+npm run dev
+```
+
+Make sure PostgreSQL and Redis are running locally on their default ports.
 
 Compiles TypeScript to JavaScript in the `dist/` folder.
 
@@ -133,7 +197,7 @@ http://localhost:3000/api-docs
 ### Local Auth
 - **POST** `/auth/register` - Register new user
 - **POST** `/auth/login` - Login user (rate-limited)
-
+- 
 ### OAuth
 - **GET** `/auth/oauth/google` - Initiate Google OAuth flow
 - **GET** `/auth/oauth/google/callback` - Google OAuth callback handler
@@ -157,11 +221,3 @@ http://localhost:3000/api-docs
 ## Queue System
 
 BullMQ integration for asynchronous job processing with Redis as the message broker.
-
-## License
-
-ISC
-
-## Author
-
-its-Inbarajan
